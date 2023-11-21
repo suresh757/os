@@ -1,0 +1,75 @@
+#!/bin/bash
+# Address book file
+ADDRESSBOOK="addressbook.txt"
+# Function to create address book
+create_addressbook() {
+touch "$ADDRESSBOOK"
+echo "Address book created successfully!"
+}
+# Function to view address book
+view_addressbook() {
+if [ -s "$ADDRESSBOOK" ]; then
+cat "$ADDRESSBOOK"
+else
+echo "Address book is empty."
+fi
+}
+# Function to insert a record
+insert_record() {
+echo "Enter the First Name:"
+read fname
+echo "Enter the Last Name:"
+read lname
+echo "Enter the Email ID:"
+read email
+echo "Enter the Mobile Number:"
+read mno
+echo "Enter the Address:"
+read addr
+echo "$fname $lname $email $mno $addr" >> "$ADDRESSBOOK"
+echo "Record inserted successfully!"
+}
+# Function to delete a record
+delete_record() {
+echo "Enter the First Name or Email ID of the record to delete:"
+read keyword
+if grep -q "$keyword" "$ADDRESSBOOK"; then
+grep -v "$keyword" "$ADDRESSBOOK" > temp.txt
+mv temp.txt "$ADDRESSBOOK"
+echo "Record deleted successfully!"
+else
+echo "Record not found."
+fi
+}
+# Function to modify a record
+modify_record() {
+echo "Enter the First Name or Email ID of the record to modify:"
+read keyword
+if grep -q "$keyword" "$ADDRESSBOOK"; then
+grep -v "$keyword" "$ADDRESSBOOK" > temp.txt
+mv temp.txt "$ADDRESSBOOK"
+insert_record
+echo "Record modified successfully!"else
+echo "Record not found."
+fi
+}
+# Main loop
+while true; do
+echo "Address Book Options:"
+echo "a) Create address book"
+echo "b) View address book"
+echo "c) Insert a record"
+echo "d) Delete a record"
+echo "e) Modify a record"
+echo "f) Exit"
+read choice
+case $choice in
+a) create_addressbook ;;
+b) view_addressbook ;;
+c) insert_record ;;
+d) delete_record ;;
+e) modify_record ;;
+f) echo "Exiting..." ; exit ;;
+*) echo "Invalid choice, please choose again." ;;
+esac
+done

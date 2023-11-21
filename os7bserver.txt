@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#define SHM_KEY 1234 // Unique key for the shared memory segment
+int main() { 
+int shmid; 
+char *shared_memory; 
+char message[] = "Hello, client! This is the server."; 
+// Create a shared memory segment
+shmid = shmget(SHM_KEY, 1024, IPC_CREAT | 0666); 
+if (shmid == -1) { 
+perror("shmget"); 
+exit(EXIT_FAILURE); 
+ } 
+// Attach the shared memory segment
+shared_memory = (char *)shmat(shmid, NULL, 0); 
+if (shared_memory == (char *)-1) { 
+perror("shmat"); 
+exit(EXIT_FAILURE); 
+ } 
+// Write message to shared memory
+strcpy(shared_memory, message); 
+printf("Server: Message written to shared memory: %s\n", message); 
+// Detach the shared memory segment
+shmdt(shared_memory); 
+return 0; 
+}

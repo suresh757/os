@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#define SHM_KEY 1234 // Same key as used by the server
+int main() { 
+int shmid; 
+char *shared_memory; 
+// Locate the shared memory segment
+shmid = shmget(SHM_KEY, 1024, 0666); 
+if (shmid == -1) { 
+perror("shmget"); 
+exit(EXIT_FAILURE); 
+ } 
+// Attach the shared memory segment
+shared_memory = (char *)shmat(shmid, NULL, 0); 
+if (shared_memory == (char *)-1) { 
+perror("shmat"); 
+exit(EXIT_FAILURE); 
+ } 
+// Read message from shared memory and display it
+printf("Client: Message read from shared memory: %s\n", 
+shared_memory); 
+// Detach the shared memory segment
+shmdt(shared_memory); 
+// Remove the shared memory segment
+shmctl(shmid, IPC_RMID, NULL); 
+return 0; 
+}
